@@ -4,6 +4,8 @@
 
 This document translates the Events feature request into an implementation-ready specification that a coding agent can execute independently. It defines the product intent, user flows, data model, permissions, UX expectations, backend behavior, analytics, moderation rules, edge cases, acceptance criteria, and a reusable build prompt.
 
+For the concrete implementation sequence and repository bootstrap plan for the separate Expo app, also follow `docs/events-execution-plan.md`.
+
 The MVP focuses on one core domain: **Events**, with two event subtypes:
 
 - **Community Events**: planned gatherings run by institutions, organizations, or hosts.
