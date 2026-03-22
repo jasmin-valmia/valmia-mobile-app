@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "name": "valmia-mobile-app",
+    "slug": "valmia-mobile-app",
+    "scheme": "valmia",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "bundleIdentifier": "com.valmia.mobileapp"
+    },
+    "android": {
+      "package": "com.valmia.mobileapp"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
