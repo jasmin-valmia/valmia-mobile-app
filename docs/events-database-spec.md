@@ -67,6 +67,13 @@ The app and local tooling should eventually receive at least:
 - optional project reference for CLI automation.
 
 Never expose the service role key in the client bundle.
+For an Expo mobile client, the minimum runtime configuration should remain app-safe only:
+- `EXPO_PUBLIC_SUPABASE_URL`,
+- `EXPO_PUBLIC_SUPABASE_ANON_KEY`,
+- `EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY` if Clerk is used for auth,
+- optional public Google client IDs only if the chosen Clerk Expo flow requires them.
+
+The Google OAuth client secret must stay in Clerk and/or other trusted backend configuration, never in the Expo app.
 
 ## 3.3 Required folder expectations
 A clean implementation should eventually contain at least:
@@ -75,6 +82,33 @@ A clean implementation should eventually contain at least:
 - `src/lib/supabase.ts` or equivalent typed client bootstrap,
 - `src/types/database.ts` or equivalent generated database types,
 - `src/features/events/` for query and domain logic.
+
+## 3.4 Separate Expo repository bootstrap
+If the team implements Events in a separate mobile repository, prefer this baseline structure:
+- Expo app at repo root,
+- Expo Router for navigation,
+- Clerk for authentication,
+- Supabase CLI configuration checked into the same repo,
+- generated database types committed or regenerated via scripted workflow.
+
+Recommended top-level project modules:
+- `app/` for Expo Router routes,
+- `src/features/auth/`,
+- `src/features/events/`,
+- `src/lib/clerk/`,
+- `src/lib/supabase/`,
+- `src/providers/`,
+- `supabase/migrations/`,
+- `supabase/seed.sql`.
+
+Recommended sequencing for that repo:
+1. scaffold the Expo project and routing shell,
+2. wire Clerk signed-in/signed-out state,
+3. add Supabase client bootstrap and migration workflow,
+4. apply the Events schema,
+5. generate database types,
+6. build feed, detail, create, and my-events surfaces,
+7. finish Google iOS/Android OAuth credentials once available.
 
 ---
 
@@ -425,6 +459,24 @@ Important integrity rules:
 - cannot RSVP to cancelled/completed/deleted events,
 - cannot create events in the past unless admin workflow explicitly allows it,
 - organizer may optionally receive an automatic `going` RSVP row at creation time.
+
+---
+
+## 9.5 Clerk + Supabase implementation note
+If Clerk is used for the mobile app, define the authentication strategy explicitly before coding production RLS integrations.
+
+Recommended implementation stance:
+- Clerk manages end-user sign-in UX,
+- Supabase remains the system of record for app data,
+- migrations and policies are still authored for Supabase,
+- profile creation and identity mapping must be handled deliberately, not implied.
+
+Minimum requirement for MVP planning:
+- every `profiles.id` must map deterministically to the authenticated user identity used for data writes,
+- the app must document whether it is using native Supabase Auth, Clerk-to-Supabase token exchange, or trusted backend mediation,
+- no policy should depend on frontend-only role checks.
+
+If identity bridging is not finalized yet, the team may scaffold the mobile client and migrations first, but production write flows should not ship until the chosen Clerk-to-Supabase identity path is implemented and tested.
 
 ---
 
